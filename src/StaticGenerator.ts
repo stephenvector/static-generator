@@ -2,8 +2,6 @@ import path from "path";
 import marked from "marked";
 import matter from "gray-matter";
 
-console.log(process.argv);
-
 export enum SiteGeneratorMode {
   Dev = "dev",
   Build = "build",
@@ -32,7 +30,6 @@ export default class SiteGenerator {
     this.cssPaths = [];
     this.markdownPaths = [];
     this.siteCSS = {};
-    this.bs = browserSync.create();
 
     this.watcher = chokidar.watch(["./**/*.md", "./**/*.css"], {
       ignored: [/^node_modules/, /^coverage/, /^public/, /^build/],
@@ -42,14 +39,6 @@ export default class SiteGenerator {
     this.watcher.on("ready", this.onReady.bind(this));
 
     this.startBrowserSync();
-  }
-
-  minifyHTML(htmlString: string) {
-    return minify(htmlString, {
-      collapseWhitespace: true,
-      removeEmptyAttributes: true,
-      removeEmptyElements: false,
-    });
   }
 
   startBrowserSync() {
