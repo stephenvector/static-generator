@@ -1,32 +1,27 @@
-import chokidar from "chokidar"
-import yargs from "yargs"
-import marked from "marked"
-import matter from "gray-matter"
-import browserSync from "browser-sync"
-import { minify } from "html-minifier"
-import autoprefixer from "autoprefixer"
-import postcss from "postcss"
+import * as fs from "fs";
+import * as path from "path";
 
-const bs = browserSync.create();
+async function readDirectory(dirPath: string) {
+  return new Promise((resolve, reject) => {
+    fs.readdir(
+      dirPath,
+      { encoding: "utf-8", withFileTypes: true },
+      (err, files) => {
+        if (err) {
+          return reject(err);
+        }
 
-const HTML_TEMPLATE = `<!doctype html>
-<html>
-<head>
-{{HEAD}}
-</head>
-<body>
-{{BODY}}
-</body>
-</html>
-`;
+        files.forEach((file) => {
+          if (file.isFile()) {
+            fs.statSync(path.resolve(dirPath, file.name));
+            console.log(file.name);
+          } else if (file.isDirectory()) {
+            readDirectory(path.resolve(dirPath, file.name));
+          }
+        });
+      }
+    );
+  });
+}
 
-bs.init({
-  server: "public",
-  serveStatic: ['public'],
-  files: ["**/*.html"],
-  ui: false,
-  logLevel: "silent",
-  notify: false
-})
-
-console.log(yargs(process.argv.slice(2)).argv)
+readDirectory(path.resolve(__dirname, "../"));

@@ -2,29 +2,12 @@
   "name": "@stephenvector/static-site-generator",
   "license": "MIT",
   "scripts": {
-    "build": "tsc",
-    "test": "tsc --noEmit"
+    "build": "tsc"
   },
   "devDependencies": {
-    "@types/autoprefixer": "^9.7.2",
-    "@types/browser-sync": "^2.26.1",
-    "@types/html-minifier": "^4.0.0",
-    "@types/marked": "^1.1.0",
     "@types/node": "^14.14.8",
-    "@types/yargs": "^15.0.10",
     "prettier": "^2.1.2",
     "typescript": "^4.0.5"
   },
-  "dependencies": {
-    "autoprefixer": "^10.0.2",
-    "browser-sync": "^2.26.13",
-    "chokidar": "^3.4.3",
-    "gray-matter": "^4.0.2",
-    "html-minifier": "^4.0.0",
-    "marked": "^1.2.4",
-    "postcss": "^8.1.7",
-    "postcss-preset-env": "^6.7.0",
-    "precss": "^4.0.0",
-    "yargs": "^16.1.1"
-  }
+  "prettier": {}
 }
