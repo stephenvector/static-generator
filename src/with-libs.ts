@@ -19,6 +19,7 @@ const webpages: WebPage[] = [];
 const BASE_PATH = process.cwd();
 
 async function processWebpageFile(filePath: string) {
+  console.log(filePath);
   const t = fs.readFileSync(filePath);
   const m = matter(t.toString());
   const fileMarkdown = m.content;
@@ -29,7 +30,7 @@ async function processWebpageFile(filePath: string) {
   const webpageSlug =
     typeof matterSlug === "string" ? matterSlug : filePathSlug;
   const indexPath = `/${webpageSlug}/index.html`;
-  if (matterSlug) {
+  if (webpageSlug && typeof m.data.title === "string") {
     webpages.push({
       slug: webpageSlug,
       html: fileHTML,
@@ -74,28 +75,40 @@ export const HTML_TEMPLATE = `<!doctype html>
 <html>
 <head>
 <meta charset="utf-8" />
+<title>{{TITLE}}</title>
+<style type="text/css">
+.wrapper {
+  max-width: 32rem;
+  margin: 0 auto;
+}
+body { background: #fff;color:#000;font-family: sans-serif; }
+</style>
 <script src="http://localhost:3000/client.js" type="text/javascript"></script>
 </head>
-<body></body>
+<body>
+  <div class="wrapper">
+    <header>
+      <a href="/">Home</a>
+    </header>
+    <section>{{CONTENT}}</section>
+  </div>
+</body>
 </html>
 `;
 
 app.get("/", (req, res, next) => {
-  if (webpages.length === 0) {
-    return next();
-  }
-
   const links: string[] = [];
-
+  let renderedLinks = ``;
   webpages.forEach((page) => {
-    links.push(
-      `<a href="${page.indexPath.replace("index.html", "")}">${page.title}</a>`
-    );
+    renderedLinks += `<li><a href="${page.indexPath.replace(
+      "index.html",
+      ""
+    )}">${page.title}</a></li>`;
   });
 
   console.log(webpages);
 
-  res.send(HTML_TEMPLATE.replace("<body>", `<body>${links.join(" ")}`));
+  res.send(HTML_TEMPLATE.replace("{{CONTENT}}", `${renderedLinks}`));
 });
 
 app.use((req, res, next) => {
@@ -117,8 +130,8 @@ app.use((req, res, next) => {
 
   res.send(
     HTML_TEMPLATE.replace(
-      "<body>",
-      `<body><h1>${webpageFound.title}</h1>${webpageFound.html}`
+      "{{CONTENT}}",
+      `<h1>${webpageFound.title}</h1>${webpageFound.html}`
     )
   );
 });
